@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.django
+    container_name: django_container
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=your_secret_key
+      - ALLOWED_HOSTS=your_domain.com
+      - DATABASE_URL=postgres://myuser:mypassword@db/mydatabase
+      - PGUSER=myuser
+      - PGPASSWORD=mypassword
+      - PGDATABASE=mydatabase
+      - PGHOST=db
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    tty: true
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx_container
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    name: postgres_data

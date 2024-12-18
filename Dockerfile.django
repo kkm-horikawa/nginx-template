@@ -1,0 +1,10 @@
+FROM debian:bookworm-slim
+
+# Install curl
+RUN apt-get update && apt-get install -y curl
+
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install Git
+RUN apt-get install -y git
+
